@@ -61,9 +61,11 @@
   var valide = function (t) { return /^[a-f0-9]{32}$/.test(t || ''); };
 
   // L'adresse garde le jeton : « Ajouter à l'écran d'accueil » enregistre ainsi l'espace du vendeur
+  // On recharge vraiment la page sur ?t=… : le téléphone retient l'adresse de chargement, pas une adresse modifiée après coup
   function memoriser(t) {
     ecrire(t);
-    if (new URLSearchParams(location.search).get('t') !== t) history.replaceState(null, '', '?t=' + t);
+    if (new URLSearchParams(location.search).get('t') !== t) { location.replace(location.pathname + '?t=' + t); return true; }
+    return false;
   }
 
   function charger(t) {
@@ -76,7 +78,8 @@
 
   var q = new URLSearchParams(location.search);
   var t = q.get('t');
-  if (valide(t)) ecrire(t); else { t = lire(); if (valide(t)) history.replaceState(null, '', '?t=' + t); }
+  if (valide(t)) ecrire(t);
+  else { t = lire(); if (valide(t) && memoriser(t)) return; }
   charger(t);
   frame.addEventListener('load', function () {
     var c = document.getElementById('chargement');
@@ -88,8 +91,8 @@
     var o = String(e.origin || '');
     if (!/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(o) && o !== 'https://script.google.com') return;
     var m = e.data || {};
-    if (m.type === 'alp-token' && valide(m.token)) { memoriser(m.token); proposerInstallation(); }
-    else if (m.type === 'alp-open' && valide(m.token)) { memoriser(m.token); charger(m.token); }
+    if (m.type === 'alp-token' && valide(m.token)) { if (!memoriser(m.token)) proposerInstallation(); }
+    else if (m.type === 'alp-open' && valide(m.token)) { if (!memoriser(m.token)) charger(m.token); }
     else if (m.type === 'alp-forget') { oublier(); history.replaceState(null, '', location.pathname); }
   });
 
