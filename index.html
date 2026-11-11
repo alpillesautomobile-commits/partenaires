@@ -93,7 +93,7 @@
     var m = e.data || {};
     if (m.type === 'alp-token' && valide(m.token)) { if (!memoriser(m.token)) proposerInstallation(); }
     else if (m.type === 'alp-open' && valide(m.token)) { if (!memoriser(m.token)) charger(m.token); }
-    else if (m.type === 'alp-forget') { oublier(); history.replaceState(null, '', location.pathname); }
+    else if (m.type === 'alp-forget') { oublier(); bandeau.hidden = true; history.replaceState(null, '', location.pathname); }
   });
 
   // Bandeau « Installer l'appli » quand la page est ouverte dans le navigateur
@@ -104,11 +104,11 @@
 
   function proposerInstallation() {
     if (installee || !valide(lire())) return;
-    try { if (localStorage.getItem('alp-bandeau-ferme') === '1') return; } catch (e) {}
+    try { if (sessionStorage.getItem('alp-bandeau-ferme') === '1') return; } catch (e) {}
     var txt = document.getElementById('installer-texte');
     var btn = document.getElementById('installer-bouton');
     if (ios) {
-      txt.innerHTML = '<b>Gardez l\'appli sur votre iPhone.</b><br>Touchez le bouton Partager <span aria-hidden="true">⬆︎</span> en bas de Safari, puis « Sur l\'écran d\'accueil ».';
+      txt.innerHTML = '<b>Gardez l\'appli sur votre iPhone.</b><br>Touchez Partager <span aria-hidden="true">⬆︎</span>, puis « Voir plus », puis « Sur l\'écran d\'accueil » <span aria-hidden="true">⊞</span>.';
       btn.hidden = true;
     } else if (invite) {
       txt.innerHTML = '<b>Gardez l\'appli sur votre téléphone.</b><br>Une icône Alpilles s\'ajoute à votre écran d\'accueil.';
@@ -126,7 +126,7 @@
   });
   bandeau.querySelector('.x').addEventListener('click', function () {
     bandeau.hidden = true;
-    try { localStorage.setItem('alp-bandeau-ferme', '1'); } catch (e) {}
+    try { sessionStorage.setItem('alp-bandeau-ferme', '1'); } catch (e) {}
   });
   setTimeout(proposerInstallation, 2500);
 
