@@ -13,161 +13,157 @@
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
-  html, body { margin: 0; height: 100%; background: #1a1a1a; overflow: hidden; }
-  #app {
-    position: fixed; left: 0; right: 0;
-    top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px);
-    width: 100%; height: calc(100% - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    border: 0; background: #e0dbd3;
-  }
-  #chargement {
-    position: fixed; inset: 0; display: grid; place-items: center; background: #1a1a1a;
-    color: #c8a96e; font: 600 12px ui-monospace, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase;
-    transition: opacity .3s;
-  }
-  #chargement img { width: 96px; height: 96px; display: block; margin: 0 auto 16px; }
-  #installer {
-    position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    background: #1a1a1a; color: #fafaf8; border-top: 3px solid #c8a96e; padding: 14px 44px 14px 14px;
-    font: 14px/1.45 -apple-system, "Segoe UI", Arial, sans-serif; box-shadow: 0 6px 24px rgba(0,0,0,.35); z-index: 5;
-  }
-  #installer b { color: #c8a96e; font-weight: 600; }
-  #installer button.go {
-    margin-top: 10px; background: #c8a96e; color: #1a1a1a; border: 0; padding: 10px 14px;
-    font: 600 13px ui-monospace, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
-  }
-  #installer .x { position: absolute; top: 8px; right: 8px; background: none; border: 0; color: #9a9a94; font-size: 22px; line-height: 1; padding: 6px; cursor: pointer; }
+  :root { --n:#1a1a1a; --paper:#fafaf8; --fond:#e0dbd3; --or:#c8a96e; --ord:#8a6d35; --gris:#6b6b66; --trait:#cfc8bc; --r:#b42318; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fond); color: var(--n); font: 16px/1.5 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+  .top { background: var(--n); color: var(--paper); padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 14px; display: flex; justify-content: space-between; align-items: center; }
+  .top b { font: 700 15px Georgia, "Times New Roman", serif; letter-spacing: .08em; text-transform: uppercase; }
+  .top span { font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--or); }
+  main { max-width: 520px; margin: 0 auto; padding: 22px 16px 40px; }
+  .brand { font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; color: var(--gris); }
+  h1 { font: 700 30px/1.1 Georgia, "Times New Roman", serif; margin: 6px 0 12px; text-transform: uppercase; }
+  h1 span { color: var(--ord); }
+  .intro { color: #3d3d3a; margin: 0 0 18px; }
+  .primes { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--paper); border-top: 3px solid var(--or); margin-bottom: 18px; }
+  .primes div { padding: 12px 10px; border-right: 1px solid var(--trait); }
+  .primes div:last-child { border-right: 0; }
+  .primes b { display: block; font: 700 20px ui-monospace, Menlo, monospace; }
+  .primes small { color: var(--gris); font-size: 12px; line-height: 1.3; display: block; }
+  .card { background: var(--paper); border-top: 3px solid var(--n); padding: 18px 16px; margin-bottom: 16px; }
+  .card h2 { font: 700 15px Georgia, serif; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 14px; }
+  label { display: block; font: 600 11px ui-monospace, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; color: #3d3d3a; margin-bottom: 14px; }
+  label .opt { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--gris); }
+  input, select { display: block; width: 100%; margin-top: 6px; font: 16px ui-monospace, Menlo, monospace; color: var(--n); background: transparent; border: 0; border-bottom: 1.5px solid var(--trait); border-radius: 0; padding: 6px 0; outline: none; -webkit-appearance: none; appearance: none; }
+  input:focus, select:focus { border-bottom-color: var(--or); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .contact { background: #f3ecdd; border-left: 3px solid var(--or); padding: 10px 12px; font-size: 14px; margin-bottom: 14px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font: 14px/1.4 -apple-system, "Segoe UI", Arial, sans-serif; text-transform: none; letter-spacing: 0; color: var(--n); }
+  .check input { width: 20px; height: 20px; margin: 1px 0 0; flex: none; -webkit-appearance: checkbox; appearance: checkbox; accent-color: var(--n); }
+  .btn { display: block; width: 100%; text-align: center; background: var(--n); color: var(--paper); border: 0; padding: 15px 16px; font: 600 14px ui-monospace, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; text-decoration: none; }
+  .btn.or { background: var(--or); color: var(--n); }
+  .btn.ghost { background: transparent; color: var(--n); border: 1.5px solid var(--n); }
+  .btn[disabled] { opacity: .55; }
+  .err { color: var(--r); font-size: 14px; margin: 0 0 12px; }
+  .ok { color: #1f6f43; font-size: 14px; margin: 10px 0 0; }
+  ol { margin: 0; padding-left: 20px; font-size: 14px; color: #3d3d3a; }
+  ol li { margin-bottom: 6px; }
+  .small { font-size: 13px; color: var(--gris); }
+  .foot { text-align: center; font-size: 12px; color: var(--gris); margin-top: 24px; }
   [hidden] { display: none !important; }
 </style>
 </head>
 <body>
-<div id="chargement"><div><img src="icon-192.png" alt="">Alpilles Partenaires</div></div>
-<iframe id="app" title="Alpilles Partenaires" allow="clipboard-write"></iframe>
-<div id="installer" hidden>
-  <button class="x" type="button" aria-label="Fermer">×</button>
-  <div id="installer-texte"></div>
-  <button class="go" type="button" id="installer-bouton" hidden>Installer l'appli</button>
-</div>
+<header class="top"><b>Alpilles Automobile</b><span>Partenaires</span></header>
+<main id="app"><p class="small">Chargement…</p></main>
 <script>
 (function () {
   var API = 'https://script.google.com/macros/s/AKfycbzA-bWlIz8OTyCPWXosg-exrHvqruGQUwlLbB6hZfEvgNnFALXQu0twBhgG-d5tGAHP/exec';
   var CLE = 'alp-token';
-  var frame = document.getElementById('app');
-  var bandeau = document.getElementById('installer');
-
+  var valide = function (t) { return /^[a-f0-9]{32}$/.test(t || ''); };
   function lire() { try { return localStorage.getItem(CLE) || ''; } catch (e) { return ''; } }
   function ecrire(t) { try { localStorage.setItem(CLE, t); } catch (e) {} }
-  function oublier() { try { localStorage.removeItem(CLE); } catch (e) {} }
-  var valide = function (t) { return /^[a-f0-9]{32}$/.test(t || ''); };
-
-  // L'adresse garde le jeton : « Ajouter à l'écran d'accueil » enregistre ainsi l'espace du vendeur
-  // On recharge vraiment la page sur ?t=… : le téléphone retient l'adresse de chargement, pas une adresse modifiée après coup
-  function memoriser(t) {
-    ecrire(t);
-    if (new URLSearchParams(location.search).get('t') !== t) { location.replace(location.pathname + '?t=' + t); return true; }
-    return false;
-  }
-
-  // Navigateurs intégrés (Instagram, Facebook, LinkedIn…) : ils bloquent la page Google dans un cadre, on l'ouvre en direct
-  var integre = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|LinkedInApp|Snapchat|TikTok|musical_ly|BytedanceWebview|Line\//i.test(navigator.userAgent);
-
-  function charger(t) {
-    var q = new URLSearchParams(location.search);
-    var p = new URLSearchParams({ app: '1' });
-    if (valide(t)) p.set('t', t);
-    else ['r', 'p'].forEach(function (k) { if (q.get(k)) p.set(k, q.get(k)); });
-    // Inscription : toujours en page directe (le chemin le plus sûr, celui des QR codes). Le cadre ne sert qu'à l'espace déjà créé.
-    // Toujours en page directe : le cadre ne s'affiche pas sur certains téléphones
-    p.delete('app'); location.replace(API + '?' + p.toString()); return;
-    frame.src = API + '?' + p.toString();
-  }
-
-  // Instagram, Facebook… : leur navigateur n'affiche pas les pages Google Apps Script. On propose d'ouvrir le vrai navigateur.
-  if (integre) {
-    var ici = location.href;
-    var android = /android/i.test(navigator.userAgent);
-    var cible = android ? 'intent://' + location.host + location.pathname + location.search + '#Intent;scheme=https;S.browser_fallback_url=' + encodeURIComponent(ici) + ';end'
-                        : 'x-safari-' + ici;
-    var c = document.getElementById('chargement');
-    c.innerHTML = '';
-    var bloc = document.createElement('div');
-    bloc.style.cssText = 'max-width:320px;padding:0 24px;text-align:center;text-transform:none;letter-spacing:0;font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;color:#fafaf8';
-    bloc.innerHTML = '<img src="icon-192.png" alt="" style="width:88px;height:88px;display:block;margin:0 auto 18px">' +
-      '<div style="font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#c8a96e;margin-bottom:14px">Alpilles Partenaires</div>' +
-      '<p style="margin:0 0 20px">Pour vous inscrire, ouvrez la page dans ' + (android ? 'Chrome' : 'Safari') + '.</p>' +
-      '<a id="sortir" href="' + cible + '" style="display:block;padding:14px 16px;background:#c8a96e;color:#1a1a1a;text-decoration:none;font:600 14px ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase">Ouvrir dans ' + (android ? 'Chrome' : 'Safari') + '</a>' +
-      '<p style="margin:20px 0 0;font-size:13px;color:#b8b8b0">Si rien ne se passe : touchez les trois points <b style="color:#fafaf8">···</b> en haut à droite, puis « Ouvrir dans le navigateur ».</p>';
-    c.appendChild(bloc);
-    frame.hidden = true;
-    if (android) setTimeout(function () { location.href = cible; }, 300);
-    return;
-  }
 
   var q = new URLSearchParams(location.search);
+
+  // Déjà inscrit : on ouvre directement son espace
   var t = q.get('t');
-  if (valide(t)) ecrire(t);
-  else { t = lire(); if (valide(t) && memoriser(t)) return; }
-  charger(t);
-  // Secours : si la page ne s'est pas affichée au bout de 10 s, un bouton l'ouvre en direct
-  var secours = setTimeout(function () {
-    var c = document.getElementById('chargement');
-    if (c.hidden) return;
-    var a = document.createElement('a');
-    a.href = frame.src.replace('app=1&', '').replace('?app=1', '?');
-    a.textContent = 'Ouvrir la page';
-    a.style.cssText = 'display:inline-block;margin-top:18px;padding:10px 16px;background:#c8a96e;color:#1a1a1a;text-decoration:none;font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.06em';
-    c.firstChild.appendChild(document.createElement('br'));
-    c.firstChild.appendChild(a);
-  }, 10000);
-  frame.addEventListener('load', function () {
-    clearTimeout(secours);
-    var c = document.getElementById('chargement');
-    c.style.opacity = '0'; setTimeout(function () { c.hidden = true; }, 300);
-  });
+  if (!valide(t)) t = lire();
+  if (valide(t)) { ecrire(t); location.replace(API + '?t=' + t); return; }
 
-  // Messages envoyés par l'appli (page Google Apps Script affichée dans le cadre)
-  window.addEventListener('message', function (e) {
-    var o = String(e.origin || '');
-    if (!/^https:\/\/[a-z0-9-]+-script\.googleusercontent\.com$/.test(o) && o !== 'https://script.google.com') return;
-    var m = e.data || {};
-    if (m.type === 'alp-token' && valide(m.token)) { if (!memoriser(m.token)) proposerInstallation(); }
-    else if (m.type === 'alp-open' && valide(m.token)) { if (!memoriser(m.token)) charger(m.token); }
-    else if (m.type === 'alp-forget') { oublier(); bandeau.hidden = true; history.replaceState(null, '', location.pathname); }
-  });
+  // Pas encore inscrit : formulaire d'inscription sur cette page (fonctionne partout, Instagram compris)
+  var app = document.getElementById('app');
+  var integre = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|LinkedInApp|Snapchat|TikTok|musical_ly|BytedanceWebview|Line\//i.test(navigator.userAgent);
+  var recruteur = (q.get('r') || '').replace(/[^\p{L}\s'-]/gu, '').trim().slice(0, 30);
+  if (recruteur) recruteur = recruteur.charAt(0).toUpperCase() + recruteur.slice(1);
+  var parrain = (q.get('p') || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 12);
+  var P = { premiere: 200, vente: 100, parrainage: 100 };
 
-  // Bandeau « Installer l'appli » quand la page est ouverte dans le navigateur
-  var installee = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  var invite = null;
-  var ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); invite = e; proposerInstallation(); });
-
-  function proposerInstallation() {
-    if (installee || !valide(lire())) return;
-    try { if (sessionStorage.getItem('alp-bandeau-ferme') === '1') return; } catch (e) {}
-    var txt = document.getElementById('installer-texte');
-    var btn = document.getElementById('installer-bouton');
-    if (ios) {
-      txt.innerHTML = '<b>Gardez l\'appli sur votre iPhone.</b><br>Touchez Partager <span aria-hidden="true">⬆︎</span>, puis « Voir plus », puis « Sur l\'écran d\'accueil » <span aria-hidden="true">⊞</span>.';
-      btn.hidden = true;
-    } else if (invite) {
-      txt.innerHTML = '<b>Gardez l\'appli sur votre téléphone.</b><br>Une icône Alpilles s\'ajoute à votre écran d\'accueil.';
-      btn.hidden = false;
-    } else {
-      txt.innerHTML = '<b>Gardez l\'appli sur votre téléphone.</b><br>Ouvrez le menu ⋮ du navigateur, puis « Ajouter à l\'écran d\'accueil ».';
-      btn.hidden = true;
-    }
-    bandeau.hidden = false;
+  function appel(corps) {
+    return fetch(API, { method: 'POST', body: JSON.stringify(corps), redirect: 'follow' }).then(function (r) { return r.json(); });
   }
-  document.getElementById('installer-bouton').addEventListener('click', function () {
-    if (!invite) return;
-    invite.prompt();
-    invite.userChoice.then(function () { invite = null; bandeau.hidden = true; });
-  });
-  bandeau.querySelector('.x').addEventListener('click', function () {
-    bandeau.hidden = true;
-    try { sessionStorage.setItem('alp-bandeau-ferme', '1'); } catch (e) {}
-  });
-  setTimeout(proposerInstallation, 2500);
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function val(id) { var e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+  function choixEquipe(equipe) {
+    return '<label>Qui vous a présenté le programme ? <span class="opt">(facultatif)</span><select id="f-rec"><option value="">Choisissez votre contact Alpilles</option>' +
+      equipe.map(function (m) { return '<option value="' + esc(m.nom) + '">' + esc(m.nom + (m.agence ? ' · ' + m.agence : '')) + '</option>'; }).join('') + '</select></label>';
+  }
+
+  function formulaire() {
+    var choix = recruteur ? '<div class="contact">Votre contact Alpilles Automobile : <b>' + esc(recruteur) + '</b></div>' : '<div id="f-choix"></div>';
+    app.innerHTML =
+      '<div class="brand">Alpilles Automobile · Saint-Rémy · Aix-en-Provence</div>' +
+      '<h1>Alpilles <span>Partenaires</span></h1>' +
+      '<p class="intro">Une reprise refusée chez vous ? Envoyez-nous le client. Nous lui rachetons sa voiture cash ou la vendons en dépôt-vente : dans les deux cas, vous touchez une prime.</p>' +
+      '<div class="primes"><div><b>' + P.premiere + ' €</b><small>votre premier client</small></div><div><b>' + P.vente + ' €</b><small>chaque client suivant</small></div><div><b>' + P.parrainage + ' €</b><small>par collègue parrainé</small></div></div>' +
+      '<form class="card" id="f" novalidate><h2>Créer mon espace</h2>' + choix +
+      (parrain ? '<div class="contact">Parrainé avec le code <b>' + esc(parrain) + '</b></div>' : '') +
+      '<label>Prénom et nom<input id="f-nom" autocomplete="name" placeholder="Thomas Martin"></label>' +
+      '<label>Mobile<input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="06 12 34 56 78"></label>' +
+      '<label>E-mail <span class="opt">(votre lien d\'accès y sera envoyé)</span><input id="f-mail" type="email" inputmode="email" autocomplete="email" placeholder="thomas.martin@exemple.fr"></label>' +
+      '<div class="row"><label>Concession<input id="f-conc" placeholder="Garage du Rond-Point"></label><label>Ville<input id="f-ville" placeholder="Cavaillon"></label></div>' +
+      '<label class="check"><input type="checkbox" id="f-ok"><span>J\'accepte les règles du programme ci-dessous.</span></label>' +
+      '<p class="err" id="f-err" hidden></p>' +
+      '<button class="btn" type="submit" id="f-go">Créer mon espace</button></form>' +
+      '<div class="card"><h2>Comment ça marche</h2><ol>' +
+        '<li>Votre client veut vendre et vous ne reprenez pas sa voiture, ou il trouve votre reprise trop basse.</li>' +
+        '<li>Vous nous l\'envoyez depuis votre téléphone, en 30 secondes, avec son accord.</li>' +
+        '<li>Nous l\'appelons et lui proposons un rachat cash ou un dépôt-vente. Vous gardez votre vente.</li>' +
+        '<li>Vous recevez votre prime par virement dès que la voiture est rachetée ou vendue.</li></ol></div>' +
+      '<div class="card"><h2>Les règles</h2><ol>' +
+        '<li>' + P.premiere + ' € pour votre premier client racheté ou vendu, puis ' + P.vente + ' € pour chaque client suivant.</li>' +
+        '<li>Parrainage : ' + P.parrainage + ' € quand un collègue inscrit avec votre code conclut son premier client.</li>' +
+        '<li>Pas de prime sur un simple mandat signé. Le client revient au premier vendeur qui l\'envoie.</li>' +
+        '<li>Virement dans les 7 jours qui suivent le rachat ou la livraison.</li>' +
+        '<li>Envoyez uniquement des clients qui ont accepté d\'être appelés.</li></ol></div>' +
+      '<div class="card"><h2>Déjà inscrit ?</h2><label>Votre e-mail ou mobile<input id="l-id" placeholder="thomas.martin@exemple.fr"></label>' +
+        '<button class="btn ghost" type="button" id="l-go">Recevoir mon lien par e-mail</button><p class="ok" id="l-ok" hidden></p></div>' +
+      '<p class="foot">Alpilles Automobile · rachat cash, dépôt-vente et mandat de véhicules d\'occasion</p>';
+
+    document.getElementById('f').addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var err = document.getElementById('f-err'), go = document.getElementById('f-go');
+      err.hidden = true; go.disabled = true; go.textContent = 'Création…';
+      appel({ action: 'inscription', data: {
+        nom: val('f-nom'), mobile: val('f-tel'), email: val('f-mail'), concession: val('f-conc'), ville: val('f-ville'),
+        parrain: parrain, recruteur: recruteur || val('f-rec'), regles: document.getElementById('f-ok').checked
+      } }).then(function (r) {
+        if (r && r.ok && valide(r.token)) { ecrire(r.token); bienvenue(r); return; }
+        err.textContent = (r && r.error) || 'L\'inscription n\'a pas abouti. Réessayez.';
+        err.hidden = false; go.disabled = false; go.textContent = 'Créer mon espace';
+      }).catch(function () {
+        err.textContent = 'Connexion impossible. Vérifiez votre réseau et réessayez.';
+        err.hidden = false; go.disabled = false; go.textContent = 'Créer mon espace';
+      });
+    });
+
+    document.getElementById('l-go').addEventListener('click', function () {
+      var b = this, ok = document.getElementById('l-ok');
+      if (!val('l-id')) return;
+      b.disabled = true;
+      appel({ action: 'lien', identifiant: val('l-id') }).then(function () {
+        ok.textContent = 'Si vous êtes inscrit, votre lien vient de partir par e-mail.'; ok.hidden = false; b.disabled = false;
+      }).catch(function () { ok.textContent = 'Envoi impossible pour le moment. Réessayez.'; ok.hidden = false; b.disabled = false; });
+    });
+  }
+
+  function bienvenue(r) {
+    window.scrollTo(0, 0);
+    app.innerHTML =
+      '<div class="brand">Alpilles Partenaires</div><h1>Bienvenue <span>!</span></h1>' +
+      '<div class="card"><p style="margin-top:0">Votre espace est créé. Votre lien personnel vient d\'être envoyé à <b>' + esc(r.email) + '</b>.</p>' +
+      '<p>Depuis votre espace, vous nous envoyez un client en 30 secondes et vous suivez vos primes.</p>' +
+      '<a class="btn or" href="?t=' + r.token + '">Ouvrir mon espace</a>' +
+      (integre ? '<p class="small" style="margin-bottom:0">Si votre espace ne s\'ouvre pas ici, ouvrez le lien reçu par e-mail.</p>' : '') +
+      '</div><div class="card"><h2>Gardez l\'appli sous la main</h2><p class="small" style="margin:0">Une fois votre espace ouvert : sur iPhone, Partager, puis « Voir plus », puis « Sur l\'écran d\'accueil ». Sur Android, menu ⋮ puis « Ajouter à l\'écran d\'accueil ».</p></div>';
+  }
+
+  // Liste des commerciaux (si pas de lien personnel) : la page s'affiche tout de suite, la liste arrive ensuite
+  formulaire();
+  if (!recruteur) appel({ action: 'boot' }).then(function (b) {
+    var z = document.getElementById('f-choix');
+    if (z && b && b.equipe && b.equipe.length) z.innerHTML = choixEquipe(b.equipe);
+  }).catch(function () {});
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
 })();
