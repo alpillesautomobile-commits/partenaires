@@ -82,6 +82,27 @@
     frame.src = API + '?' + p.toString();
   }
 
+  // Instagram, Facebook… : leur navigateur n'affiche pas les pages Google Apps Script. On propose d'ouvrir le vrai navigateur.
+  if (integre) {
+    var ici = location.href;
+    var android = /android/i.test(navigator.userAgent);
+    var cible = android ? 'intent://' + location.host + location.pathname + location.search + '#Intent;scheme=https;S.browser_fallback_url=' + encodeURIComponent(ici) + ';end'
+                        : 'x-safari-' + ici;
+    var c = document.getElementById('chargement');
+    c.innerHTML = '';
+    var bloc = document.createElement('div');
+    bloc.style.cssText = 'max-width:320px;padding:0 24px;text-align:center;text-transform:none;letter-spacing:0;font:15px/1.5 -apple-system,Segoe UI,Arial,sans-serif;color:#fafaf8';
+    bloc.innerHTML = '<img src="icon-192.png" alt="" style="width:88px;height:88px;display:block;margin:0 auto 18px">' +
+      '<div style="font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#c8a96e;margin-bottom:14px">Alpilles Partenaires</div>' +
+      '<p style="margin:0 0 20px">Pour vous inscrire, ouvrez la page dans ' + (android ? 'Chrome' : 'Safari') + '.</p>' +
+      '<a id="sortir" href="' + cible + '" style="display:block;padding:14px 16px;background:#c8a96e;color:#1a1a1a;text-decoration:none;font:600 14px ui-monospace,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase">Ouvrir dans ' + (android ? 'Chrome' : 'Safari') + '</a>' +
+      '<p style="margin:20px 0 0;font-size:13px;color:#b8b8b0">Si rien ne se passe : touchez les trois points <b style="color:#fafaf8">···</b> en haut à droite, puis « Ouvrir dans le navigateur ».</p>';
+    c.appendChild(bloc);
+    frame.hidden = true;
+    if (android) setTimeout(function () { location.href = cible; }, 300);
+    return;
+  }
+
   var q = new URLSearchParams(location.search);
   var t = q.get('t');
   if (valide(t)) ecrire(t);
