@@ -77,7 +77,8 @@
     if (valide(t)) p.set('t', t);
     else ['r', 'p'].forEach(function (k) { if (q.get(k)) p.set(k, q.get(k)); });
     // Inscription : toujours en page directe (le chemin le plus sûr, celui des QR codes). Le cadre ne sert qu'à l'espace déjà créé.
-    if (integre || !valide(t)) { p.delete('app'); location.replace(API + '?' + p.toString()); return; }
+    // Toujours en page directe : le cadre ne s'affiche pas sur certains téléphones
+    p.delete('app'); location.replace(API + '?' + p.toString()); return;
     frame.src = API + '?' + p.toString();
   }
 
