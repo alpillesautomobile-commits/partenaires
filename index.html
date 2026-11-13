@@ -68,11 +68,15 @@
     return false;
   }
 
+  // Navigateurs intégrés (Instagram, Facebook, LinkedIn…) : ils bloquent la page Google dans un cadre, on l'ouvre en direct
+  var integre = /Instagram|FBAN|FBAV|FB_IAB|FBIOS|Messenger|LinkedInApp|Snapchat|TikTok|musical_ly|BytedanceWebview|Line\//i.test(navigator.userAgent);
+
   function charger(t) {
     var q = new URLSearchParams(location.search);
     var p = new URLSearchParams({ app: '1' });
     if (valide(t)) p.set('t', t);
     else ['r', 'p'].forEach(function (k) { if (q.get(k)) p.set(k, q.get(k)); });
+    if (integre) { p.delete('app'); location.replace(API + '?' + p.toString()); return; }
     frame.src = API + '?' + p.toString();
   }
 
@@ -81,7 +85,19 @@
   if (valide(t)) ecrire(t);
   else { t = lire(); if (valide(t) && memoriser(t)) return; }
   charger(t);
+  // Secours : si la page ne s'est pas affichée au bout de 10 s, un bouton l'ouvre en direct
+  var secours = setTimeout(function () {
+    var c = document.getElementById('chargement');
+    if (c.hidden) return;
+    var a = document.createElement('a');
+    a.href = frame.src.replace('app=1&', '').replace('?app=1', '?');
+    a.textContent = 'Ouvrir la page';
+    a.style.cssText = 'display:inline-block;margin-top:18px;padding:10px 16px;background:#c8a96e;color:#1a1a1a;text-decoration:none;font:600 13px ui-monospace,Menlo,monospace;letter-spacing:.06em';
+    c.firstChild.appendChild(document.createElement('br'));
+    c.firstChild.appendChild(a);
+  }, 10000);
   frame.addEventListener('load', function () {
+    clearTimeout(secours);
     var c = document.getElementById('chargement');
     c.style.opacity = '0'; setTimeout(function () { c.hidden = true; }, 300);
   });
